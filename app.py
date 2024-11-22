@@ -29,7 +29,7 @@ app.config['SESSION_TYPE'] = 'filesystem'
 app.config['PERMANENT_SESSION_LIFETIME'] = timedelta(days=7)
 Session(app)
 # 模拟用户密码
-VALID_PASSWORD = '解知心'
+VALID_PASSWORD = 'PassWord'
 
 def allowed_file(filename):
     return '.' in filename and filename.rsplit('.', 1)[1].lower() in ALLOWED_EXTENSIONS
@@ -211,4 +211,4 @@ def delete_photos():
         return jsonify({"success": False, "message": f"照片删除失败: {str(e)}"}), 500
 
 if __name__ == '__main__':
-    app.run(debug=True,host="127.0.0.1",port=11110)
+    app.run(debug=True,host="127.0.0.1",port=5000)

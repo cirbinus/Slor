@@ -114,7 +114,7 @@ const app = createApp({
           src: image.src // 直接使用 src 字段
         }));
 
-        const response = await axios.post('https://abya.top:11111/api/delete_photos', {
+        const response = await axios.post('/api/delete_photos', {
           images: imagesToDelete
         }, {
           headers: {
@@ -190,7 +190,7 @@ const app = createApp({
       progress.value = 0;
 
       try {
-        const response = await axios.post('https://abya.top:11111/upload', formData, {
+        const response = await axios.post('/upload', formData, {
           headers: {
             'Content-Type': 'multipart/form-data'
           },

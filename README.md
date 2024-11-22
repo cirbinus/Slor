@@ -4,6 +4,11 @@
 
 本项目名为Slor,主要用于展示家人的照片和视频，伴随时间轴的变化，照片和视频也随展示。
 
+### 预览
+
+![Preview1](./previews/1.jpg)
+![Preview2](./previews/2.jpg)
+
 ### 前端
     
 前端为纯html代码，使用vue和element plus，以时间轴展示瀑布流照片和视频，具有预览、添加、批量删除功能。
@@ -16,8 +21,6 @@
 
 
 ### 部署
-
-1. 更换login和script中的api地址
 1. 更换app.py中`VALID_PASSWORD`
 1. 安装uv
     ```
@@ -29,5 +32,5 @@
     ```
 1. 持久化运行
     ```
-    uv run gunicorn -D -w 4 -b 127.0.0.1:11110 app:app
+    uv run gunicorn -D -w 4 -b 127.0.0.1:5000 app:app
     ```
