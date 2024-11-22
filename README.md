@@ -30,5 +30,6 @@
     ```
 1. 持久化运行
     ```
+    uv tool install gunicorn
     uv run gunicorn -D -w 4 -b 127.0.0.1:5000 app:app
     ```
