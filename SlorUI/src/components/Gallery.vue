@@ -1,6 +1,6 @@
 <template>
     <lightgallery
-      :settings="{ speed: 500, plugins: plugins }"
+      :settings="{ speed: 500,thumbnail: true, plugins: plugins }"
       :onInit="onInit"
       :onBeforeSlide="onBeforeSlide"
     >
@@ -42,12 +42,14 @@
   import Lightgallery from 'lightgallery/vue';
   import lgZoom from 'lightgallery/plugins/zoom';
   import lgVideo from 'lightgallery/plugins/video';
+  import lgThumbnail from "lightgallery/plugins/thumbnail";
   
   // 样式文件
   import 'lightgallery/css/lightgallery.css';
   import 'lightgallery/css/lg-zoom.css';
   import 'lightgallery/css/lg-video.css';
-  
+  import 'lightgallery/css/lg-thumbnail.css';
+
   export default {
     name: 'App',
     components: {
@@ -56,7 +58,7 @@
     data() {
       return {
         // 插件列表
-        plugins: [lgZoom, lgVideo],
+        plugins: [lgZoom, lgThumbnail, lgVideo],
   
         // 媒体资源列表
         mediaList: [
