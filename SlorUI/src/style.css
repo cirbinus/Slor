@@ -59,10 +59,13 @@ button:focus-visible {
 }
 
 #app {
-  max-width: 1280px;
+  width: 100%;
+  max-width: 800px;
   margin: 0 auto;
   padding: 2rem;
   text-align: center;
+  box-sizing: border-box;
+  /* 确保 padding 不影响宽度 */
 }
 
 @media (prefers-color-scheme: light) {

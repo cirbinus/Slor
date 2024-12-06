@@ -103,12 +103,13 @@
   }
   
   .gallery-item {
-    margin: 10px;
+    margin: 5px;
   }
   
   .img-responsive {
-    width: 200px;
-    height: auto;
+    width: 90px;
+    height: 90px;
+    object-fit: cover;
     border-radius: 8px;
     transition: transform 0.2s ease;
   }
