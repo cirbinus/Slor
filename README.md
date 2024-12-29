@@ -22,6 +22,10 @@
 1. 更换app.py中`VALID_PASSWORD`
 1. 安装uv
     ```
+    # use administrator powershell
+    powershell -c "irm https://astral.sh/uv/install.ps1 | iex"
+    set Path=C:\Users\abin\.local\bin;%Path%
+    或者
     pip install uv
     ```
 1. 运行

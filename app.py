@@ -1,4 +1,4 @@
-from flask import Flask, render_template,  request, jsonify, session
+from flask import Flask, render_template,  request, jsonify, session,send_from_directory
 from flask_session import Session
 import os,json,uuid
 from werkzeug.utils import secure_filename
@@ -7,12 +7,13 @@ from PIL.ExifTags import TAGS
 from datetime import datetime,timedelta
 from moviepy.editor import VideoFileClip  # 用于处理视频
 
-app = Flask(__name__)
+app = Flask(__name__,static_folder='static')
 
+server_ip = 'http://127.0.0.1:5000'
 # 设置基本参数
 app.secret_key = '2bEZsfMdqWcw/BYQCHsbOojKH/62UDnAgFMJ3VYqtmg'
-UPLOAD_FOLDER = './static/medias'
-THUMBNAIL_FOLDER = './static/thumbnails'
+UPLOAD_FOLDER = os.path.join(app.static_folder, 'medias')
+THUMBNAIL_FOLDER = os.path.join(app.static_folder, 'thumbnails')
 ALLOWED_EXTENSIONS = {'jpg', 'jpeg', 'png', 'mp4', 'mov'}
 app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
 app.config['THUMBNAIL_FOLDER'] = THUMBNAIL_FOLDER
@@ -104,7 +105,7 @@ def login():
         return jsonify({"message": "Invalid password", "status": "error"}), 401
 
 # 处理文件上传请求
-@app.route('/upload', methods=['POST'])
+@app.route('/api/upload', methods=['POST'])
 def upload_files():
 
     if 'file' not in request.files:
@@ -135,14 +136,18 @@ def upload_files():
             if media_type == 'image':
                 create_image_thumbnail(filepath, thumbnail_path)
                 capture_time = get_image_capture_time(filepath)
+                filepath = server_ip + "/static/medias/" + filename
+                thumbnail_path = server_ip + "/static/thumbnails/" + thumbnail_filename
             else:
                 create_video_thumbnail(filepath, thumbnail_path)
                 capture_time = get_video_capture_time(filepath)
+                filepath = '{"source": [{"src":"'+server_ip + "/static/medias/" + filename+'", "type":"video/mp4"}], "attributes": {"preload": false, "controls": true}}'
+                thumbnail_path = server_ip + "/static/thumbnails/" + thumbnail_filename
             
             capture_time = str(capture_time.strftime('%Y-%m-%d'))
-            # 添加到 mediaList
+            # 添加到 mediaList 
             media_item = {
-                "src": filepath,
+                "src": str(filepath),
                 "thumbnail": thumbnail_path,
                 "alt": filename,
                 "type": media_type,
@@ -174,7 +179,6 @@ def get_photos_metadata():
 
 # 处理前端删除请求
 # 删除照片并更新 JSON 文件的 API
-@app.route('/api/delete_photos', methods=['POST'])
 @app.route('/api/delete_photos', methods=['POST'])
 def delete_photos():
     try:
@@ -209,6 +213,11 @@ def delete_photos():
         return jsonify({"success": True, "message": "删除成功"}), 200
     except Exception as e:
         return jsonify({"success": False, "message": f"照片删除失败: {str(e)}"}), 500
+
+
+@app.route('/static/medias/<filename>')
+def get_file(filename):
+    return send_from_directory(app.config['UPLOAD_FOLDER'], filename)
 
 if __name__ == '__main__':
     app.run(debug=True,host="127.0.0.1",port=5000)

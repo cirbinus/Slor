@@ -10,10 +10,23 @@ export default defineConfig({
     vue(),
     // ...
     AutoImport({
-      resolvers: [ElementPlusResolver()],
+      resolvers: [
+        ElementPlusResolver(),
+      ],
     }),
     Components({
-      resolvers: [ElementPlusResolver()],
+      resolvers: [
+        ElementPlusResolver(),
+      ],
     }),
   ],
+  server: {
+    host: "0.0.0.0",
+    proxy: {
+      '/api': {
+        target: 'http://localhost:5000', // Flask 服务器地址
+        changeOrigin: true,
+      },
+    },
+  },
 });

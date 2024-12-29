@@ -1,66 +1,60 @@
 <template>
-    <el-form :model="form" ref="formRef" label-width="100px" @submit.native.prevent="handleSubmit">
-        <el-form-item label="用户名" prop="username" :rules="[{ required: true, message: '请输入用户名', trigger: 'blur' }]">
-            <el-input v-model="form.username" placeholder="请输入用户名"></el-input>
-        </el-form-item>
-
-        <el-form-item label="密码" prop="password" :rules="[{ required: true, message: '请输入密码', trigger: 'blur' }]">
-            <el-input type="password" v-model="form.password" placeholder="请输入密码"></el-input>
-        </el-form-item>
-
-        <el-form-item>
-            <el-button type="primary" @click="handleSubmit">登录</el-button>
-            <el-button @click="resetForm">重置</el-button>
-        </el-form-item>
-    </el-form>
+    <!-- 验证弹窗 -->
+    <div id="loginBox">
+        <input type="text" id="password" placeholder="请输入暗号">
+        <button onclick="submitLogin()">确定</button>
+        <button onclick="closeLoginBox()">取消</button>
+    </div>
 </template>
 
-<script>
-import { ref } from 'vue';
+<script setup>
+import { ref, defineModel } from 'vue';
 import axios from 'axios'; // 确保你已安装 axios
+const actionCallback = defineModel();  // 用于保存用户操作的回调
+// 是否显示登录弹窗
+ const toggleLoginBox = (show) => {
+  islogined.value = !show;
+};
 
-export default {
-    setup() {
-        const form = ref({
-            username: '',
-            password: ''
+// 提交密码验证
+async function submitLogin() {
+    const password = document.getElementById('password').value;
+    try {
+        const response = await fetch('/api/login', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ password: password })
         });
 
-        const formRef = ref(null);
+        const result = await response.json();
 
-        const handleSubmit = () => {
-            formRef.value.validate(async (valid) => {
-                if (valid) {
-                    // 处理登录逻辑
-                    try {
-                        const response = await axios.post('/api/login', form.value);
-                        console.log('登录成功', response.data);
-                        // 处理成功后的逻辑，比如保存 token 或者跳转页面
-                    } catch (error) {
-                        console.error('登录失败', error.response.data);
-                        // 处理错误，比如显示错误提示
-                    }
-                } else {
-                    console.error('验证失败');
-                    return false;
-                }
-            });
-        };
-
-        const resetForm = () => {
-            formRef.value.resetFields();
-        };
-
-        return {
-            form,
-            formRef,
-            handleSubmit,
-            resetForm
-        };
+        if (result.status === 'success') {
+            // 保存登录状态
+            localStorage.setItem('loggedIn', 'True');
+            toggleLoginBox();  // 隐藏登录框
+            if (actionCallback) actionCallback();  // 执行原操作
+        } else {
+            alert(result.message);
+        }
+    } catch (error) {
+        console.error('Error:', error);
     }
-};
+}
 </script>
 
-<style scoped>
+<style >
 /* 添加样式 */
+/* 登录弹窗 */
+#loginBox {
+  display: none;
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  padding: 20px;
+  background: #fff;
+  border: 1px solid #ccc;
+  box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.5);
+  z-index: 1000;
+}
 </style>

@@ -1,5 +1,4 @@
-
-const { createApp, computed, ref, onMounted, nextTick, watch } = Vue;
+const { createApp, computed, ref, onMounted, watch } = Vue;
 const { ElMessage } = ElementPlus;
 const { Plus } = ElementPlusIconsVue;
 
@@ -15,58 +14,34 @@ const app = createApp({
     // 服务器元数据
     const mediaList = ref([]);
     const error = ref(null);
+    const mediaElements = ref('');
     // 删除变量
     const selectedImages = ref([]);
     const selectionMode = ref(false);
-    // 预览变量
-    const isMediaPlaying = ref(false);
-    const currentMedia = ref({});
-    const currentMediaType = computed(() => currentMedia.value.type);
 
     // 以下为获取数据函数
+    
     const fetchPhotosMetadata = async () => {
       try {
         const response = await fetch('/api/media-list'); // 替换为您的接口地址
         const data = await response.json();
 
-        // 按日期分组
-        mediaList.value = groupMediaByDate(data);
+        mediaList.value = data;
+
+        let elements = '';
+        mediaList.value.forEach(media => {
+          elements += createMediaElement(media);
+        });
+
+        mediaElements.value = elements;
+
+        console.log(mediaElements);
+
         console.log(mediaList);
 
       } catch (error) {
         console.error('Failed to fetch media data:', error);
       }
-    };
-
-    /**
-   * 按日期分组媒体数据
-   */
-    const groupMediaByDate = (mediaList) => {
-      const grouped = {};
-
-      mediaList.forEach((media) => {
-        // 尝试解析日期
-        const dateObj = new Date(media.capture_time);
-        if (isNaN(dateObj)) {
-          console.warn(`Invalid date format: ${media.capture_time}`);
-          return; // 跳过无效日期项
-        }
-
-        // 提取 YYYY-MM-DD 格式
-        const date = dateObj.toISOString().split('T')[0];
-
-        if (!grouped[date]) {
-          grouped[date] = [];
-        }
-        grouped[date].push(media);
-      });
-
-      return Object.keys(grouped)
-        .sort((a, b) => new Date(b) - new Date(a)) // 从新到旧排序
-        .map((date) => ({
-          date,
-          media: grouped[date],
-        }));
     };
 
     // 以下为批量删除照片和视频的函数
@@ -164,9 +139,6 @@ const app = createApp({
 
     };
 
-    const isImage = (file) => {
-      return /\.(jpg|jpeg|png|gif|bmp|webp|heif)$/i.test(file); // 基于扩展名判断
-    };
 
     const handleFileChange = async (event) => {
       const files = event.target.files;
@@ -215,72 +187,25 @@ const app = createApp({
     };
 
     // 以下为预览功能
-    const allMedia = computed(() =>
-      mediaList.value.flatMap((group) => group.media)
-    );
-
-    const currentIndex = computed(() =>
-      allMedia.value.findIndex((media) => media.src === currentMedia.value?.src)
-    );
-
-    const openMedia = (media) => {
-      currentMedia.value = media;
-      isMediaPlaying.value = true;
-    };
-
-    const stopMedia = () => {
-      isMediaPlaying.value = false;
-    };
-
-    const prevMedia = () => {
-      const prevIndex =
-        currentIndex.value > 0
-          ? currentIndex.value - 1
-          : allMedia.value.length - 1; // 循环到最后一张
-      currentMedia.value = allMedia.value[prevIndex];
-    };
-
-    const nextMedia = () => {
-      const nextIndex =
-        currentIndex.value < allMedia.value.length - 1
-          ? currentIndex.value + 1
-          : 0; // 循环到第一张
-      currentMedia.value = allMedia.value[nextIndex];
-    };
-
-    // 处理触摸事件
-    const touchStartX = ref(0);
-    const handleTouchStart = (event) => {
-      touchStartX.value = event.touches[0].clientX;
-    };
-
-    const handleTouchEnd = (event) => {
-      const touchEndX = event.changedTouches[0].clientX;
-      const deltaX = touchEndX - touchStartX.value;
-      if (deltaX > 50) prevMedia();
-      else if (deltaX < -50) nextMedia();
-    };
-
-    const getMediaClass = (index) => {
-      if (index === this.currentIndex) {
-        return this.prevIndex !== null && this.currentIndex > this.prevIndex
-          ? 'active slide-in-right'
-          : 'active slide-in-left';
-      } else if (index === this.prevIndex) {
-        return this.currentIndex > this.prevIndex
-          ? 'slide-out-left'
-          : 'slide-out-right';
-      } else {
-        return '';
-      }
-    };
+    
 
     // 调用数据获取函数
-    fetchPhotosMetadata();
+    onMounted(fetchPhotosMetadata);
+    
+    watch(mediaElements, (newVal) => {
+      if (newVal !== '') {
+        lightGallery(document.getElementById("lightgallery"), {
+          plugins: [lgZoom, lgThumbnail],
+          speed: 500,
+        });
+        console.log(newVal);
+        console.log("lightGallery loaded");
+      }
+    });
 
     return {
       // 暴露元数据
-      mediaList, error,
+      mediaList, error,mediaElements,
       // 暴露上传
       fileInput,
       selectFiles,
@@ -298,22 +223,11 @@ const app = createApp({
       selectedImages,
       toggleSelection,
       // 暴露预览
-      isMediaPlaying,
-      currentMedia,
-      currentMediaType,
-      openMedia,
-      stopMedia,
-      prevMedia,
-      nextMedia,
-      handleTouchStart,
-      handleTouchEnd,
-      getMediaClass,
     };
   },
   components: {
     // 暴露图标
     Plus,
-
   }
 });
 app.use(ElementPlus);
