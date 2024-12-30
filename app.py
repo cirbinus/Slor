@@ -9,7 +9,8 @@ from moviepy.editor import VideoFileClip  # 用于处理视频
 
 app = Flask(__name__,static_folder='static')
 
-server_ip = 'http://127.0.0.1:5000'
+# 服务器地址
+server_addr = 'http://127.0.0.1:5000'
 # 设置基本参数
 app.secret_key = '2bEZsfMdqWcw/BYQCHsbOojKH/62UDnAgFMJ3VYqtmg'
 UPLOAD_FOLDER = os.path.join(app.static_folder, 'medias')
@@ -100,9 +101,9 @@ def login():
     if password == VALID_PASSWORD:
         session['loggedIn'] = True
         session.permanent = True
-        return jsonify({"message": "Login successful", "status": "success"})
+        return jsonify({"message": "登录成功", "status": "success"})
     else:
-        return jsonify({"message": "Invalid password", "status": "error"}), 401
+        return jsonify({"message": "暗号错误！！", "status": "error"}), 401
 
 # 处理文件上传请求
 @app.route('/api/upload', methods=['POST'])
@@ -136,13 +137,13 @@ def upload_files():
             if media_type == 'image':
                 create_image_thumbnail(filepath, thumbnail_path)
                 capture_time = get_image_capture_time(filepath)
-                filepath = server_ip + "/static/medias/" + filename
-                thumbnail_path = server_ip + "/static/thumbnails/" + thumbnail_filename
+                filepath = server_addr + "/static/medias/" + filename
+                thumbnail_path = server_addr + "/static/thumbnails/" + thumbnail_filename
             else:
                 create_video_thumbnail(filepath, thumbnail_path)
                 capture_time = get_video_capture_time(filepath)
-                filepath = '{"source": [{"src":"'+server_ip + "/static/medias/" + filename+'", "type":"video/mp4"}], "attributes": {"preload": false, "controls": true}}'
-                thumbnail_path = server_ip + "/static/thumbnails/" + thumbnail_filename
+                filepath = '{"source": [{"src":"'+server_addr + "/static/medias/" + filename+'", "type":"video/mp4"}], "attributes": {"preload": false, "controls": true}}'
+                thumbnail_path = server_addr + "/static/thumbnails/" + thumbnail_filename
             
             capture_time = str(capture_time.strftime('%Y-%m-%d'))
             # 添加到 mediaList 
@@ -191,17 +192,19 @@ def delete_photos():
 
         # 遍历需要删除的图片
         for item in images_to_delete:
-            src = item.get('src')
+            alt = item.get('alt')
 
             # 查找并删除对应的媒体文件及其缩略图
-            media_to_delete = next((media for media in photos_metadata if media['src'] == src), None)
+            media_to_delete = next((media for media in photos_metadata if media['alt'] == alt), None)
             if media_to_delete:
+                media_to_delete_path = './static/medias/{}'.format(media_to_delete['alt'])
+                thumbnail_to_delete_path = './static/thumbnails/thumbnail_{}.jpg'.format(media_to_delete['alt'])
                 # 删除媒体文件
-                if os.path.exists(media_to_delete['src']):
-                    os.remove(media_to_delete['src'])
+                if os.path.exists(media_to_delete_path):
+                    os.remove(media_to_delete_path)
                 # 删除缩略图
-                if os.path.exists(media_to_delete['thumbnail']):
-                    os.remove(media_to_delete['thumbnail'])
+                if os.path.exists(thumbnail_to_delete_path):
+                    os.remove(thumbnail_to_delete_path)
 
                 # 从 JSON 数据中移除该条记录
                 photos_metadata.remove(media_to_delete)

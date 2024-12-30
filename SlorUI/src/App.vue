@@ -1,5 +1,5 @@
 <template>
-  <el-header class="top-header" height="50px">
+  <el-header v-if="mediaList.length" class="top-header" height="50px">
     <!-- 删除按钮 -->
     <el-button round type="danger" class="delete-button" @click="deleteSelectedImages"
       :disabled="!selectedImages.length" v-if="selectionMode">
@@ -12,34 +12,34 @@
   </el-header>
   <el-main class="main-content">
     <!-- 空容器 -->
-    <div v-if="mediaList === null">
+    <div v-if="mediaList.length === 0">
       <el-empty description="没有照片..."> </el-empty>
     </div>
     <!-- 画廊 -->
-    <div v-if="dataLoaded">
-      <lightgallery class="lightgallery" :settings="{ speed: 500, subHtmlSelectorRelative: true, thumbnail: true, plugins: plugins }" 
-      :onBeforeSlide="onBeforeSlide">
-      <template v-for="(item, index) in mediaList" :key="index">
-        <!-- 图片项 -->
-        <a v-if="item.type === 'image'" class="gallery-item" :data-src="item.src">
-          <!-- 复选框 -->
-          <input type="checkbox" v-if="selectionMode" :value="item" class="checkbox" />
-          <div class="checkoverlay" v-if="selectionMode" @click.stop="test()"></div>
-          <img class="img-responsive" :src="item.thumbnail" :alt="item.alt"
-            :class="{ selected: selectedImages.includes(index) }" />
-        </a>
+    <div v-else-if="mediaList.length">
+      <lightgallery :key="lightGalleryRef" class="lightgallery"
+        :settings="{ speed: 500, thumbnail: true, plugins: plugins }">
+        <template v-for="(item, index) in mediaList" :key="index">
+          <!-- 图片项 -->
+          <a v-if="item.type === 'image'" class="gallery-item" :data-src="item.src">
+            <!-- 复选框 -->
+            <input type="checkbox" v-if="selectionMode" v-model="selectedImages" :value="item" class="checkbox" />
+            <div class="checkoverlay" v-if="selectionMode" @click.stop="toggleSelection(item)"></div>
+            <img class="img-responsive" :src="item.thumbnail" :alt="item.alt"/>
+          </a>
 
-        <!-- 视频项 -->
-        <a v-else-if="item.type === 'video'" class="gallery-item" :data-video="item.src" :data-poster="item.thumbnail">
-          <!-- 复选框 -->
-          <input type="checkbox" v-if="selectionMode" :value="item" class="checkbox" />
-          <div class="checkoverlay" v-if="selectionMode" @click.stop="test()"></div>
-          <img class="img-responsive" :src="item.thumbnail" :alt="item.alt"
-            :class="{ selected: selectedImages.includes(index) }" />
-        </a>
-      </template>
-    </lightgallery>
+          <!-- 视频项 -->
+          <a v-else-if="item.type === 'video'" class="gallery-item" :data-video="item.src"
+            :data-poster="item.thumbnail">
+            <!-- 复选框 -->
+            <input type="checkbox" v-if="selectionMode" v-model="selectedImages" :value="item" class="checkbox" />
+            <div class="checkoverlay" v-if="selectionMode" @click.stop="toggleSelection(item)"></div>
+            <img class="img-responsive" :src="item.thumbnail" :alt="item.alt" />
+          </a>
+        </template>
+      </lightgallery>
     </div>
+
     <!-- 上传按钮 -->
     <el-button round type="primary" class="add-button" @click="toAllowUpload">
       <el-icon>
@@ -66,10 +66,10 @@
 
 
 <script setup>
-import { onMounted, ref, onBeforeMount } from 'vue';
+import { onMounted, ref, computed } from 'vue';
 import { Plus } from '@element-plus/icons-vue';
 import { ElMessage } from 'element-plus';
-import { Axios } from 'axios';
+import axios, { Axios } from 'axios';
 import Lightgallery from 'lightgallery/vue';
 import lgZoom from 'lightgallery/plugins/zoom';
 import lgVideo from 'lightgallery/plugins/video';
@@ -93,6 +93,7 @@ const totalFiles = ref(0);
 // 用于获取图片列表
 const mediaList = ref([]);
 const dataLoaded = ref(false);
+const lightGalleryRef = ref(0);
 // 用于控制登录组件
 let actionCallback = ref(null);  // 用于保存用户操作的回调
 // 用于选择
@@ -125,12 +126,13 @@ async function submitLogin() {
       // 保存登录状态
       localStorage.setItem('loggedIn', 'True');
       closeLoginBox();  // 隐藏登录框
+      ElMessage.success(result.message);
       if (actionCallback) actionCallback();  // 执行原操作
     } else {
-      alert(result.message);
+      ElMessage.error(result.message);
     }
   } catch (error) {
-    console.error('Error:', error);
+    ElMessage.error('Error:', error);
   }
 }
 // ***登录代码***
@@ -153,6 +155,7 @@ const toAllowUpload = () => {
 };
 const handleFileChange = async (event) => {
   const files = event.target.files;
+  console.log(files);
   if (!files.length) return;
   for (const file of files) {
     if (!file.type.startsWith('image/') && !file.type.startsWith('video/')) {
@@ -160,7 +163,9 @@ const handleFileChange = async (event) => {
       continue;
     }
     await uploadFile(file);
-  }
+  };
+  // 重置文件输入控件的值
+  fileInput.value.value = '';
 };
 const uploadFile = async (file) => {
   const formData = new FormData();
@@ -175,8 +180,8 @@ const uploadFile = async (file) => {
     });
 
     if (response.ok) {
-      fetchPhotosMetadata();
       ElMessage.success('上传成功');
+      await fetchPhotosMetadata();
     } else {
       ElMessage.error('上传失败');
     }
@@ -184,6 +189,7 @@ const uploadFile = async (file) => {
     ElMessage.error('上传失败');
   } finally {
     uploading.value = false;
+    console.log('上传后', mediaList.value);
   }
 };
 // ***上传代码***
@@ -196,26 +202,87 @@ const fetchPhotosMetadata = async () => {
     mediaList.value = data;
     dataLoaded.value = true; // 数据加载完成
     console.log(mediaList.value);
+    // 刷新lightGallery组件
+    lightGalleryRef.value += 1;
   } catch (error) {
     console.error('Failed to fetch media data:', error);
   }
 };
 // ***获取元数据代码***
 
-
-function toggleSelectionMode() {
-  selectionMode.value = !selectionMode.value;
-  if (!selectionMode.value) {
-    selectedImages.value = []; // 取消选择时清空选中的图片
-  }
-}
-function selectImage(index) {
-  if (selectedImages.value.includes(index)) {
-    selectedImages.value = selectedImages.value.filter(i => i !== index);
+// ***删除代码***
+//切换选择模式
+const isAllSelected = computed(() => selectedImages.value.length === mediaList.value.length);
+const toggleSelectionMode = () => {
+  // 仅在未登录时显示验证弹窗
+  if (!localStorage.getItem('loggedIn')) {
+    actionCallback = () => {
+      // 在此处执行受保护操作的代码
+      selectionMode.value = !selectionMode.value;
+      if (!selectionMode.value) {
+        selectedImages.value = []; // 退出选择模式时清空选择
+      };
+      actionCallback = null; // 清除回调
+    };
+    showLoginBox();
   } else {
-    selectedImages.value.push(index);
+    // 已登录，直接执行操作
+    selectionMode.value = !selectionMode.value;
+    if (!selectionMode.value) {
+      selectedImages.value = []; // 退出选择模式时清空选择
+    }
+  };
+
+};
+// 切换单个照片的选中状态
+const toggleSelection = (media) => {
+  const index = selectedImages.value.findIndex(item => item.alt === media.alt);
+  if (index > -1) {
+    // 如果已选中，取消选中
+    selectedImages.value.splice(index, 1);
+  } else {
+    // 如果未选中，添加到选中数组
+    selectedImages.value.push(media);
   }
-}
+};
+// 批量删除方法
+const deleteSelectedImages = async () => {
+  try {
+    const imagesToDelete = selectedImages.value.map(image => ({
+      alt: image.alt // 直接使用 alt 字段
+    }));
+
+    const response = await axios.post('/api/delete_photos', {
+      images: imagesToDelete
+    }, {
+      headers: {
+        'Content-Type': 'application/json'
+      }
+    });
+
+    if (response.status === 200) {
+      ElMessage.success('删除成功');
+
+      // 从媒体列表中移除已删除的图片
+      mediaList.value = mediaList.value.filter(item =>
+        !selectedImages.value.some(selected => item.alt === selected.alt)
+      );
+
+      // 清空选择
+      selectedImages.value = [];
+      selectionMode.value = false;
+
+      // 重新获取元数据
+      fetchPhotosMetadata();
+    } else {
+      ElMessage.error(`删除失败: ${response.data.message}`);
+    }
+  } catch (error) {
+    console.error('删除时发生错误:', error);
+    ElMessage.error('删除时发生错误');
+  }
+};
+// ***删除代码***
 
 // 以下为生命周期钩子
 onMounted(async () => {

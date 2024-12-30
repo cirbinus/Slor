@@ -1,1 +1,16 @@
-[{"src": "{\"source\": [{\"src\":\"http://127.0.0.1:5000/static/medias/6e107809-be98-458b-b320-15775bb086f8.mp4\", \"type\":\"video/mp4\"}], \"attributes\": {\"preload\": false, \"controls\": true}}", "thumbnail": "http://127.0.0.1:5000/static/thumbnails/thumbnail_6e107809-be98-458b-b320-15775bb086f8.mp4.jpg", "alt": "6e107809-be98-458b-b320-15775bb086f8.mp4", "type": "video", "capture_time": "2024-12-29"}]
+[
+    {
+        "src": "http://127.0.0.1:5000/static/medias/3c174d3a-02c8-4804-af8c-5ebb37882ffd.jpg",
+        "thumbnail": "http://127.0.0.1:5000/static/thumbnails/thumbnail_3c174d3a-02c8-4804-af8c-5ebb37882ffd.jpg.jpg",
+        "alt": "3c174d3a-02c8-4804-af8c-5ebb37882ffd.jpg",
+        "type": "image",
+        "capture_time": "2024-12-30"
+    },
+    {
+        "src": "http://127.0.0.1:5000/static/medias/bd4f8d03-5401-47a2-ae14-f0e8a7fc5acc.jpg",
+        "thumbnail": "http://127.0.0.1:5000/static/thumbnails/thumbnail_bd4f8d03-5401-47a2-ae14-f0e8a7fc5acc.jpg.jpg",
+        "alt": "bd4f8d03-5401-47a2-ae14-f0e8a7fc5acc.jpg",
+        "type": "image",
+        "capture_time": "2024-12-30"
+    }
+]
