@@ -29,21 +29,32 @@
     target=server_addr
     ```
 
+1. 构建`dist`文件夹
+    ```
+    cd SlorUI
+    npm run build
+    ```
+
+1. 移动`SlorUI/dist/index.html`到`templates`文件夹下  
+
+1. 移动`SlorUI/dist/assets`到`static`文件夹下  
+
 1. 安装uv
     ```
     # use administrator powershell
     powershell -c "irm https://astral.sh/uv/install.ps1 | iex"
     set Path=C:\Users\abin\.local\bin;%Path%
-    或者
+
+    # linux
+    curl -LsSf https://astral.sh/uv/install.sh | sh
+
+
+    # 或者
     pip install uv
     ```
 1. 运行server
     ```
     uv run app.py
-    ```
-1. 运行client
-    ```
-    npm run dev
     ```
 
 1. 持久化运行server

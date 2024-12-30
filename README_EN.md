@@ -1,5 +1,6 @@
+# Slor
 
-**Other language versions: [Chinese](README_EN.md).**
+**Other language versions: [Chinese](README.md).**
 
 The project is named Slor and is mainly used to display photos and videos of family members. As the timeline changes, photos and videos are also displayed accordingly.
 
@@ -11,7 +12,7 @@ Compatible with browsers, supporting both PC and mobile devices.
 ![Preview2](./previews/2.jpg)
 ![Preview3](./previews/3.jpg)
 
-### Frontend
+### Front end
     
 The front-end uses Vue3 and Element Plus to display waterfall photos and videos, with functions such as adding, batch deleting, and previewing.
 
@@ -21,32 +22,41 @@ The backend uses Flask and UV package managers. Generate thumbnail images of pho
 
 
 ### Deployment
-1. Replace the 'VALID-PASSWORD' in app. py` server_addr`
+1. Replace the 'VALID_PASSWORD' in `app.py` server_addr`
 
 1. Replace/ Target in SlorUI/cite. config. ts`
-```
-target=server_addr
-```
+    ```
+    target=server_addr
+    ```
+
+1. Build a 'dist' folder
+    ```
+    cd SlorUI
+    npm run build
+    ```
+
+1. Move`SlorUI/dist/index.html`to the`templates`folder
+
+1. Move`SlorUI/dist/assets` to the`static`folder
 
 1. Install UV
-```
-# use administrator powershell
-powershell -c "irm  https://astral.sh/uv/install.ps1  | iex"
-set Path=C:\Users\abin\.local\bin;% Path%
-perhaps
-pip install uv
-```
+    ```
+    # use administrator powershell(windows)
+    powershell -c "irm  https://astral.sh/uv/install.ps1  | iex"
+    set Path=C:\Users\abin\.local\bin;% Path%
+
+    # linux
+    curl -LsSf https://astral.sh/uv/install.sh | sh
+
+    pip install uv
+    ```
 1. Run the server
-```
-uv run app.py
-```
-1. Run the client
-```
-npm run dev
-```
+    ```
+    uv run app.py
+    ```
 
 1. Persistently run the server
-```
-uv tool install gunicorn
-uv run gunicorn -D -w 4 -b 127.0.0.1:5000 app:app
-```
+    ```
+    uv tool install gunicorn
+    uv run gunicorn -D -w 4 -b 127.0.0.1:5000 app:app
+    ```

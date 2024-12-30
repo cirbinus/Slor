@@ -7,11 +7,12 @@ from PIL.ExifTags import TAGS
 from datetime import datetime,timedelta
 from moviepy.editor import VideoFileClip  # 用于处理视频
 
-app = Flask(__name__,static_folder='static')
+app = Flask(__name__,static_folder='static/assets', template_folder='templates')
 
 # 服务器地址
 server_addr = 'http://127.0.0.1:5000'
 # 设置基本参数
+
 app.secret_key = '2bEZsfMdqWcw/BYQCHsbOojKH/62UDnAgFMJ3VYqtmg'
 UPLOAD_FOLDER = os.path.join(app.static_folder, 'medias')
 THUMBNAIL_FOLDER = os.path.join(app.static_folder, 'thumbnails')
@@ -19,7 +20,7 @@ ALLOWED_EXTENSIONS = {'jpg', 'jpeg', 'png', 'mp4', 'mov'}
 app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
 app.config['THUMBNAIL_FOLDER'] = THUMBNAIL_FOLDER
 app.config['MAX_CONTENT_LENGTH'] = 500 * 1024 * 1024  # 设置最大上传大小为 100MB
-app.config['JSON_FILE'] = './static/media_list.json'
+app.config['JSON_FILE'] = './static/assets/media_list.json'
 
 # 创建缩略图文件夹（如果不存在）
 os.makedirs(UPLOAD_FOLDER, exist_ok=True)
@@ -137,13 +138,13 @@ def upload_files():
             if media_type == 'image':
                 create_image_thumbnail(filepath, thumbnail_path)
                 capture_time = get_image_capture_time(filepath)
-                filepath = server_addr + "/static/medias/" + filename
-                thumbnail_path = server_addr + "/static/thumbnails/" + thumbnail_filename
+                filepath = server_addr + "/static/assets/medias/" + filename
+                thumbnail_path = server_addr + "/static/assets/thumbnails/" + thumbnail_filename
             else:
                 create_video_thumbnail(filepath, thumbnail_path)
                 capture_time = get_video_capture_time(filepath)
-                filepath = '{"source": [{"src":"'+server_addr + "/static/medias/" + filename+'", "type":"video/mp4"}], "attributes": {"preload": false, "controls": true}}'
-                thumbnail_path = server_addr + "/static/thumbnails/" + thumbnail_filename
+                filepath = '{"source": [{"src":"'+server_addr + "/static/assets/medias/" + filename+'", "type":"video/mp4"}], "attributes": {"preload": false, "controls": true}}'
+                thumbnail_path = server_addr + "/static/assets/thumbnails/" + thumbnail_filename
             
             capture_time = str(capture_time.strftime('%Y-%m-%d'))
             # 添加到 mediaList 
@@ -197,8 +198,8 @@ def delete_photos():
             # 查找并删除对应的媒体文件及其缩略图
             media_to_delete = next((media for media in photos_metadata if media['alt'] == alt), None)
             if media_to_delete:
-                media_to_delete_path = './static/medias/{}'.format(media_to_delete['alt'])
-                thumbnail_to_delete_path = './static/thumbnails/thumbnail_{}.jpg'.format(media_to_delete['alt'])
+                media_to_delete_path = './static/assets/medias/{}'.format(media_to_delete['alt'])
+                thumbnail_to_delete_path = './static/assets/thumbnails/thumbnail_{}.jpg'.format(media_to_delete['alt'])
                 # 删除媒体文件
                 if os.path.exists(media_to_delete_path):
                     os.remove(media_to_delete_path)
@@ -218,9 +219,13 @@ def delete_photos():
         return jsonify({"success": False, "message": f"照片删除失败: {str(e)}"}), 500
 
 
-@app.route('/static/medias/<filename>')
-def get_file(filename):
+@app.route('/static/assets/medias/<filename>')
+def get_medias_file(filename):
     return send_from_directory(app.config['UPLOAD_FOLDER'], filename)
+
+@app.route('/static/assets/thumbnails/<filename>')
+def get_thumbnails_file(filename):
+    return send_from_directory(app.config['THUMBNAIL_FOLDER'], filename)
 
 if __name__ == '__main__':
     app.run(debug=True,host="127.0.0.1",port=5000)
