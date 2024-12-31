@@ -1,1 +1,9 @@
-[{"src": "http://127.0.0.1:5000/static/assets/medias/db1a0efd-60b1-4470-ace8-afa4b21d0d3a.jpg", "thumbnail": "http://127.0.0.1:5000/static/assets/thumbnails/thumbnail_db1a0efd-60b1-4470-ace8-afa4b21d0d3a.jpg.jpg", "alt": "db1a0efd-60b1-4470-ace8-afa4b21d0d3a.jpg", "type": "image", "capture_time": "2024-12-30"}, {"src": "http://127.0.0.1:5000/static/assets/medias/212d2bfb-7196-478f-94b3-49957ec7a487.jpg", "thumbnail": "http://127.0.0.1:5000/static/assets/thumbnails/thumbnail_212d2bfb-7196-478f-94b3-49957ec7a487.jpg.jpg", "alt": "212d2bfb-7196-478f-94b3-49957ec7a487.jpg", "type": "image", "capture_time": "2024-12-30"}]
+[
+    {
+        "src": "http://127.0.0.1:5000/static/assets/medias/db1a0efd-60b1-4470-ace8-afa4b21d0d3a.jpg",
+        "thumbnail": "http://127.0.0.1:5000/static/assets/thumbnails/thumbnail_db1a0efd-60b1-4470-ace8-afa4b21d0d3a.jpg.jpg",
+        "alt": "db1a0efd-60b1-4470-ace8-afa4b21d0d3a.jpg",
+        "type": "image",
+        "capture_time": "2024-12-30"
+    }
+]

@@ -21,7 +21,7 @@
 后端使用flask和uv包管理器。生成照片和视频的缩略图，并生成JSON数据结构。
 
 
-### 部署
+### 事前准备
 1. 更换app.py中`VALID_PASSWORD`，`server_addr`
 
 1. 更换`./SlorUI/vite.config.ts`中`target`
@@ -35,10 +35,17 @@
     npm run build
     ```
 
-1. 移动`SlorUI/dist/index.html`到`templates`文件夹下  
+1. 移动`SlorUI/dist/assets`到`static`文件夹下
 
-1. 移动`SlorUI/dist/assets`到`static`文件夹下  
+1. 移动`SlorUI/dist/favicon.ico`到`static/assets`文件夹下
 
+1. 移动`SlorUI/dist/index.html`到`templates`文件夹下,修改`index.html`中`<link>`标签
+ 
+    ```
+    <link rel="icon" type="image/x-icon" href="/assets/favicon.ico" />
+    ```
+
+### 原生运行
 1. 安装uv
     ```
     # use administrator powershell
@@ -47,7 +54,6 @@
 
     # linux
     curl -LsSf https://astral.sh/uv/install.sh | sh
-
 
     # 或者
     pip install uv
@@ -61,4 +67,13 @@
     ```
     uv tool install gunicorn
     uv run gunicorn -D -w 4 -b 127.0.0.1:5000 app:app
+    ```
+### Docker部署
+1. 打包镜像
+    ```
+    docker build -t slor .
+    ```
+1. 运行镜像
+    ```
+    docker run -d -p 5000:5000 slor
     ```

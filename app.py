@@ -10,7 +10,7 @@ from moviepy.editor import VideoFileClip  # 用于处理视频
 app = Flask(__name__,static_folder='static/assets', template_folder='templates')
 
 # 服务器地址
-server_addr = 'http://127.0.0.1:5000'
+server_addr = 'https://abya.top:5001'
 # 设置基本参数
 
 app.secret_key = '2bEZsfMdqWcw/BYQCHsbOojKH/62UDnAgFMJ3VYqtmg'
@@ -228,4 +228,4 @@ def get_thumbnails_file(filename):
     return send_from_directory(app.config['THUMBNAIL_FOLDER'], filename)
 
 if __name__ == '__main__':
-    app.run(debug=True,host="0.0.0.0",port=5000)
+    app.run(debug=True,host="127.0.0.1",port=5000)
