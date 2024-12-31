@@ -1,9 +1,9 @@
 [
     {
-        "src": "http://127.0.0.1:5000/static/assets/medias/db1a0efd-60b1-4470-ace8-afa4b21d0d3a.jpg",
-        "thumbnail": "http://127.0.0.1:5000/static/assets/thumbnails/thumbnail_db1a0efd-60b1-4470-ace8-afa4b21d0d3a.jpg.jpg",
-        "alt": "db1a0efd-60b1-4470-ace8-afa4b21d0d3a.jpg",
+        "src": "http://127.0.0.1:5000/static/assets/medias/cf6ac4fb-23c3-4885-a3de-12494ebfe3a7.jpg",
+        "thumbnail": "http://127.0.0.1:5000/static/assets/thumbnails/thumbnail_cf6ac4fb-23c3-4885-a3de-12494ebfe3a7.jpg.jpg",
+        "alt": "cf6ac4fb-23c3-4885-a3de-12494ebfe3a7.jpg",
         "type": "image",
-        "capture_time": "2024-12-30"
+        "capture_time": "2024-12-31"
     }
 ]
