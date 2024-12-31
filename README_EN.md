@@ -21,42 +21,53 @@ The front-end uses Vue3 and Element Plus to display waterfall photos and videos,
 The backend uses Flask and UV package managers. Generate thumbnail images of photos and videos, and generate JSON data structures.
 
 
-### Deployment
-1. Replace the 'VALID_PASSWORD' in `app.py` server_addr`
 
-1. Replace/ Target in SlorUI/cite. config. ts`
+### Preparation in advance
+1. Replace the `VALID_PASSWORD` in app.py`server_addr`
+1. Replace`target` in `SlorUI/vite.config.ts`
     ```
     target=server_addr
     ```
-
-1. Build a 'dist' folder
+1. Build a `dist` folder
     ```
     cd SlorUI
     npm run build
     ```
+1. Move `SlorUI/dist/assets` to the`static`folder
+1. Move `SlorUI/dist/favicon.ico` to the `static/assets` folder
+1. Move `SlorUI/dist/index.html` to the `templates` folder and modify,the`<link>`tag in` index. html `
 
-1. Move`SlorUI/dist/index.html`to the`templates`folder
-
-1. Move`SlorUI/dist/assets` to the`static`folder
-
+    ```
+    <link rel="icon" type="image/x-icon" href="/assets/favicon.ico" />
+    ```
+### Native deployment
 1. Install UV
     ```
-    # use administrator powershell(windows)
+    # use administrator powershell
     powershell -c "irm  https://astral.sh/uv/install.ps1  | iex"
     set Path=C:\Users\abin\.local\bin;% Path%
 
     # linux
-    curl -LsSf https://astral.sh/uv/install.sh | sh
+    curl -LsSf  https://astral.sh/uv/install.sh  | sh
 
+    #Or
     pip install uv
     ```
 1. Run the server
     ```
     uv run app.py
     ```
-
 1. Persistently run the server
     ```
     uv tool install gunicorn
     uv run gunicorn -D -w 4 -b 127.0.0.1:5000 app:app
+    ```
+### Docker deployment
+1. Packaging images
+    ```
+    sudo docker build -t slor .
+    ```
+1. Run the image
+    ```
+    sudo docker run -d -p 5000:5000 slor
     ```

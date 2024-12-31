@@ -19,8 +19,8 @@ THUMBNAIL_FOLDER = os.path.join(app.static_folder, 'thumbnails')
 ALLOWED_EXTENSIONS = {'jpg', 'jpeg', 'png', 'mp4', 'mov'}
 app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
 app.config['THUMBNAIL_FOLDER'] = THUMBNAIL_FOLDER
-app.config['MAX_CONTENT_LENGTH'] = 500 * 1024 * 1024  # 设置最大上传大小为 100MB
-app.config['JSON_FILE'] = './static/assets/media_list.json'
+app.config['MAX_CONTENT_LENGTH'] = 500 * 1024 * 1024  # 设置最大上传大小为 500MB
+app.config['JSON_FILE'] = os.path.join(app.static_folder, 'media_list.json')
 
 # 创建缩略图文件夹（如果不存在）
 os.makedirs(UPLOAD_FOLDER, exist_ok=True)

@@ -45,7 +45,7 @@
     <link rel="icon" type="image/x-icon" href="/assets/favicon.ico" />
     ```
 
-### 原生运行
+### 原生部署
 1. 安装uv
     ```
     # use administrator powershell
@@ -71,9 +71,9 @@
 ### Docker部署
 1. 打包镜像
     ```
-    docker build -t slor .
+    sudo docker build -t slor .
     ```
 1. 运行镜像
     ```
-    docker run -d -p 5000:5000 slor
+    sudo docker run -d -p 5000:5000 slor
     ```
