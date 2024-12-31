@@ -10,7 +10,7 @@ from moviepy.editor import VideoFileClip  # 用于处理视频
 app = Flask(__name__,static_folder='static/assets', template_folder='templates')
 
 # 服务器地址
-server_addr = 'http://127.0.0.1:5000'
+server_addr = 'https://abya.top:5001/'
 # 设置基本参数
 
 app.secret_key = '2bEZsfMdqWcw/BYQCHsbOojKH/62UDnAgFMJ3VYqtmg'
