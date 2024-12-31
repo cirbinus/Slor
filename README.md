@@ -75,5 +75,4 @@
     ```
 1. 运行镜像
     ```
-    sudo docker run -d -p 5000:5000 slor
-    ```
+    sudo docker run -d -v /data/slor/static:/app/static -p 5000:5000 slor 
