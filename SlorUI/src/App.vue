@@ -21,16 +21,16 @@
         :settings="{ speed: 500, thumbnail: true, plugins: plugins }">
         <template v-for="(item, index) in mediaList" :key="index">
           <!-- 图片项 -->
-          <a v-if="item.type === 'image'" class="gallery-item" :data-src="item.src">
+          <a v-if="item.type === 'image'" class="gallery-item" :data-src="item.src" :data-sub-html="item.capture_time">
             <!-- 复选框 -->
             <input type="checkbox" v-if="selectionMode" v-model="selectedImages" :value="item" class="checkbox" />
             <div class="checkoverlay" v-if="selectionMode" @click.stop="toggleSelection(item)"></div>
-            <img class="img-responsive" :src="item.thumbnail" :alt="item.alt"/>
+            <img class="img-responsive" :src="item.thumbnail"  :alt="item.alt"/>
           </a>
 
           <!-- 视频项 -->
           <a v-else-if="item.type === 'video'" class="gallery-item" :data-video="item.src"
-            :data-poster="item.thumbnail">
+            :data-poster="item.thumbnail" :data-sub-html="item.capture_time">
             <!-- 复选框 -->
             <input type="checkbox" v-if="selectionMode" v-model="selectedImages" :value="item" class="checkbox" />
             <div class="checkoverlay" v-if="selectionMode" @click.stop="toggleSelection(item)"></div>
@@ -183,10 +183,10 @@ const uploadFile = async (file) => {
       ElMessage.success('上传成功');
       await fetchPhotosMetadata();
     } else {
-      ElMessage.error('上传失败');
+      ElMessage.error('上传失败:'+ response.statusText);
     }
   } catch (error) {
-    ElMessage.error('上传失败');
+    ElMessage.error('上传失败: ' + error.message + '，请检查网络连接或稍后再试');
   } finally {
     uploading.value = false;
     console.log('上传后', mediaList.value);
