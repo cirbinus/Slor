@@ -27,4 +27,4 @@ COPY --from=builder --chown=app:app /app /app
 ENV PATH="/app/.venv/bin:$PATH"
 
 # Run the FastAPI application by default
-CMD ["flask", "run", "--host", "0.0.0.0", "/app/app.py"]
+CMD ["python","/app/app.py"]
