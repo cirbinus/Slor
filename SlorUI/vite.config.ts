@@ -24,7 +24,7 @@ export default defineConfig({
     host: "0.0.0.0",
     proxy: {
       '/api': {
-        target: 'https://abya.top:5001/', // Flask 服务器地址
+        target: 'http://127.0.0.1:5000/', // Flask 服务器地址
         changeOrigin: true,
       },
     },
